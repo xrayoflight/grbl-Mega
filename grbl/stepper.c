@@ -367,7 +367,9 @@ ISR(TIMER1_COMPA_vect)
     DIRECTION_PORT(1) = (DIRECTION_PORT(1) & ~(1 << DIRECTION_BIT(1))) | st.dir_outbits[1];
     DIRECTION_PORT(2) = (DIRECTION_PORT(2) & ~(1 << DIRECTION_BIT(2))) | st.dir_outbits[2];
   #else
+    { uint8_t sreg = SREG; cli();
     DIRECTION_PORT = (DIRECTION_PORT & ~DIRECTION_MASK) | (st.dir_outbits & DIRECTION_MASK);
+    SREG = sreg; }
   #endif // Ramps Boafd
 
   // Then pulse the stepping pins
