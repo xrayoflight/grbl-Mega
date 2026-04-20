@@ -439,13 +439,15 @@ ISR(TIMER1_COMPA_vect)
       #endif
 
       // Set real-time spindle output as segment is loaded, just prior to the first step.
-      spindle_set_speed(st.exec_segment->spindle_pwm);
+      // DISABLED: Moving spindle control out of ISR to prevent port conflicts with direction pins
+      // spindle_set_speed(st.exec_segment->spindle_pwm);
 
     } else {
       // Segment buffer empty. Shutdown.
       st_go_idle();
       // Ensure pwm is set properly upon completion of rate-controlled motion.
-      if (st.exec_block->is_pwm_rate_adjusted) { spindle_set_speed(SPINDLE_PWM_OFF_VALUE); }
+      // DISABLED: spindle_set_speed call removed to prevent port conflicts
+      // if (st.exec_block->is_pwm_rate_adjusted) { spindle_set_speed(SPINDLE_PWM_OFF_VALUE); }
       system_set_exec_state_flag(EXEC_CYCLE_STOP); // Flag main program for cycle end
       return; // Nothing to do but exit.
     }
