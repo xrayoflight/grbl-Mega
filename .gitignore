@@ -1,7 +1,1 @@
-*.hex
-*.o
-*.elf
-*.DS_Store
-*.d
-
-README.md
+Nothing should be ignored based on the provided file changes. The only modified file is 'grbl/spindle_control.c', which is a source code file and should not be added to .gitignore.
