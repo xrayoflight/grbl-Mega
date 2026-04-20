@@ -70,11 +70,12 @@
   #define LIMIT_MASK ((1<<X_LIMIT_BIT)|(1<<Y_LIMIT_BIT)|(1<<Z_LIMIT_BIT)) // All limit bits
 
   // Define spindle enable and spindle direction output pins.
-  // Moved to Pin 2 (PORTE4) to avoid ALL port conflicts with steppers (PORTA, PORTC, PORTB)
-  // PORTE is only used for spindle direction and now enable - isolated from motion ports
-  #define SPINDLE_ENABLE_DDR      DDRE
-  #define SPINDLE_ENABLE_PORT     PORTE
-  #define SPINDLE_ENABLE_BIT      4 // MEGA2560 Digital Pin 2
+  // MOVED TO PIN 49 (PORTL0) - COMPLETELY ISOLATED FROM ALL STEPPER PORTS
+  // PORTA is used for steps (bits 2,3,4), PORTC for direction, PORTB for limits/enable
+  // PORTL is only used for spindle, no conflicts possible
+  #define SPINDLE_ENABLE_DDR      DDRL
+  #define SPINDLE_ENABLE_PORT     PORTL
+  #define SPINDLE_ENABLE_BIT      0 // MEGA2560 Digital Pin 49
   #define SPINDLE_DIRECTION_DDR   DDRE
   #define SPINDLE_DIRECTION_PORT  PORTE
   #define SPINDLE_DIRECTION_BIT   3 // MEGA2560 Digital Pin 5
