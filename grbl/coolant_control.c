@@ -55,6 +55,7 @@ uint8_t coolant_get_state()
 // an interrupt-level. No report flag set, but only called by routines that don't need it.
 void coolant_stop()
 {
+  uint8_t sreg = SREG; cli();
   #ifdef INVERT_COOLANT_FLOOD_PIN
     COOLANT_FLOOD_PORT |= (1 << COOLANT_FLOOD_BIT);
   #else
@@ -65,6 +66,7 @@ void coolant_stop()
   #else
     COOLANT_MIST_PORT &= ~(1 << COOLANT_MIST_BIT);
   #endif
+  SREG = sreg;
 }
 
 
@@ -75,35 +77,39 @@ void coolant_stop()
 void coolant_set_state(uint8_t mode)
 {
   if (sys.abort) { return; } // Block during abort.  
-  
+
+  uint8_t sreg = SREG; cli();
+
   if (mode & COOLANT_FLOOD_ENABLE) {
     #ifdef INVERT_COOLANT_FLOOD_PIN
       COOLANT_FLOOD_PORT &= ~(1 << COOLANT_FLOOD_BIT);
     #else
       COOLANT_FLOOD_PORT |= (1 << COOLANT_FLOOD_BIT);
     #endif
-	} else {
-	  #ifdef INVERT_COOLANT_FLOOD_PIN
-			COOLANT_FLOOD_PORT |= (1 << COOLANT_FLOOD_BIT);
-		#else
-			COOLANT_FLOOD_PORT &= ~(1 << COOLANT_FLOOD_BIT);
-		#endif
-	}
+  } else {
+    #ifdef INVERT_COOLANT_FLOOD_PIN
+      COOLANT_FLOOD_PORT |= (1 << COOLANT_FLOOD_BIT);
+    #else
+      COOLANT_FLOOD_PORT &= ~(1 << COOLANT_FLOOD_BIT);
+    #endif
+  }
   
-	if (mode & COOLANT_MIST_ENABLE) {
-		#ifdef INVERT_COOLANT_MIST_PIN
-			COOLANT_MIST_PORT &= ~(1 << COOLANT_MIST_BIT);
-		#else
-			COOLANT_MIST_PORT |= (1 << COOLANT_MIST_BIT);
-		#endif
-	} else {
-		#ifdef INVERT_COOLANT_MIST_PIN
-			COOLANT_MIST_PORT |= (1 << COOLANT_MIST_BIT);
-		#else
-			COOLANT_MIST_PORT &= ~(1 << COOLANT_MIST_BIT);
-		#endif
-	}
-	
+  if (mode & COOLANT_MIST_ENABLE) {
+    #ifdef INVERT_COOLANT_MIST_PIN
+      COOLANT_MIST_PORT &= ~(1 << COOLANT_MIST_BIT);
+    #else
+      COOLANT_MIST_PORT |= (1 << COOLANT_MIST_BIT);
+    #endif
+  } else {
+    #ifdef INVERT_COOLANT_MIST_PIN
+      COOLANT_MIST_PORT |= (1 << COOLANT_MIST_BIT);
+    #else
+      COOLANT_MIST_PORT &= ~(1 << COOLANT_MIST_BIT);
+    #endif
+  }
+
+  SREG = sreg;
+  
   sys.report_ovr_counter = 0; // Set to report change immediately
 }
 
